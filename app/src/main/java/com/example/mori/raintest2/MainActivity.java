@@ -17,8 +17,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        Button map = (Button)findViewById(R.id.button_map);
-//        map.setOnClickListener(this);
         ImageButton log = (ImageButton)findViewById(R.id.button_log2);
         log.setOnClickListener(this);
         ImageButton find = (ImageButton)findViewById(R.id.button_find2);
@@ -33,12 +31,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         Intent intent;
         switch (view.getId()){
-/*            case R.id.button_map:
-                intent = new Intent(this,MapActivity.class);
-                startActivity(intent);
-                mDrawer.closeDrawers();
-                break;
-*/            case R.id.button_log2:
+            case R.id.button_log2:
                 intent = new Intent(this,LogActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
