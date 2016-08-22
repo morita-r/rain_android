@@ -9,9 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-/**
- * Created by mori on 2016/08/21.
- */
+
 public class FindActivity extends Activity implements View.OnClickListener {
     private DrawerLayout mDrawer;
 
@@ -24,8 +22,6 @@ public class FindActivity extends Activity implements View.OnClickListener {
         main.setOnClickListener(this);
         ImageButton log = (ImageButton) findViewById(R.id.button_log2);
         log.setOnClickListener(this);
-//        Button map = (Button) findViewById(R.id.button_map);
-//        map.setOnClickListener(this);
         ImageButton weather = (ImageButton) findViewById(R.id.button_weather2);
         weather.setOnClickListener(this);
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -36,12 +32,7 @@ public class FindActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         Intent intent;
         switch (view.getId()) {
-/*            case R.id.button_map:
-                intent = new Intent(this, MapActivity.class);
-                startActivity(intent);
-                mDrawer.closeDrawers();
-                break;
-*/            case R.id.button_log2:
+            case R.id.button_log2:
                 intent = new Intent(this, LogActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
