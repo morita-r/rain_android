@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Raintest2</string>
+    <string name="description_info">info</string>
+    <string name="request_permission">this camera needs camera permissions</string>
 </resources>
