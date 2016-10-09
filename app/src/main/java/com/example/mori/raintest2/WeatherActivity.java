@@ -18,6 +18,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.FloatProperty;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -52,10 +53,10 @@ public class WeatherActivity extends FragmentActivity implements OnMapReadyCallb
     private double latitude;
     private double longitude;
     private GoogleMap mMap;
-    ArrayList<String> weather = new ArrayList<String>();
-    ArrayList<Float> temp = new ArrayList<Float>();
-    ArrayList<Float> rain = new ArrayList<Float>();
-    ArrayList<String> dt = new ArrayList<String>();
+    ArrayList<String> weather = new ArrayList<>();
+    ArrayList<Float> temp = new ArrayList<>();
+    ArrayList<Float> rain = new ArrayList<>();
+    ArrayList<String> dt = new ArrayList<>();
     Context context;
     ImageView image_rain;
     TextView text_city;
@@ -357,7 +358,7 @@ public class WeatherActivity extends FragmentActivity implements OnMapReadyCallb
         super.onResume();
     }
 
-
+    //drawer内のボタン（メニュー）管理
         @Override
         public void onClick(View view) {
         Intent intent;
@@ -366,19 +367,35 @@ public class WeatherActivity extends FragmentActivity implements OnMapReadyCallb
                 intent = new Intent(this, LogActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
+               finish();
                 break;
             case R.id.button_find2:
                 intent = new Intent(this, FindActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
+                finish();
                 break;
             case R.id.button_main2:
                 intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
+                finish();
                 break;
         }
     }
+
+    //戻るボタン無効
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction()==KeyEvent.ACTION_DOWN) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_BACK:
+                    return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
 
     @Override
     public void onLocationChanged(Location location) {

@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -148,6 +149,7 @@ public class LogActivity extends Activity implements View.OnClickListener {
 */
     }
 
+    //ボタン管理
     @Override
     public void onClick(View view) {
         Intent intent;
@@ -183,17 +185,33 @@ public class LogActivity extends Activity implements View.OnClickListener {
                 intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
+                finish();
                 break;
             case R.id.button_find2:
                 intent = new Intent(this, FindActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
+                finish();
                 break;
             case R.id.button_weather2:
                 intent = new Intent(this, WeatherActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
+                finish();
                 break;
         }
     }
+
+    //戻るボタン無効
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction()==KeyEvent.ACTION_DOWN) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_BACK:
+                    return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
 }

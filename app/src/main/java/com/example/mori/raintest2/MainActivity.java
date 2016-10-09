@@ -7,23 +7,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.AudioManager;
-import android.media.Image;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Random;
 
@@ -111,122 +106,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-
                     if(animation_frag != 0)//れいんちゃん動作中はreturn
                         return false;
 
-                    float get_X = motionEvent.getX();
-                    float get_Y = motionEvent.getY();
-                    Log.d("TouchEvent", "X:" + motionEvent.getX() + ",Y:" + motionEvent.getY());
-                    if(530 < get_X && get_X < 880 && 850 < get_Y && get_Y < 1000) {//おっぱい 怒る
-                        if (535 < get_X && get_X < 555 && 925 < get_Y && get_Y < 945) {//右乳首 乳首は喜ぶ
-                            animation_frag = 1;
-                            //ピンポーン流す
-                            if(TIKUBI_FRAG) {
-                                sp.play(TIKUBI2, 1, 1, 0, 0, 1);
-                                TIKUBI_FRAG = false;
-                            }else {
-                                sp.play(TIKUBI1, 1, 1, 0, 0, 1);
-                                TIKUBI_FRAG = true;
-                            }
-                        }else if(760 < get_X && get_X < 780 && 945 < get_Y && get_Y < 965) {//左乳首
-                            animation_frag = 1;
-                            //ピンポーン流す
-                            if(TIKUBI_FRAG) {
-                                sp.play(TIKUBI2, 1, 1, 0, 0, 1);
-                                TIKUBI_FRAG = false;
-                            }else {
-                                sp.play(TIKUBI1, 1, 1, 0, 0, 1);
-                                TIKUBI_FRAG = true;
-                            }
-                        }else {
-                            //怒った声流す
-                            animation_frag = 2;
-                            TIKUBI_FRAG = false;
-                            Random rnd = new Random();
-                            int i = rnd.nextInt(100);
-                            if(i < 45)
-                                sp.play(OPPAI1, 1, 1, 0, 0, 1);
-                            else if(i < 90)
-                                sp.play(OPPAI2, 1, 1, 0, 0, 1);
-                            else
-                                sp.play(OPPAI3, 1, 1, 0, 0, 1);
-                        }
-                    }else if(490 < get_X && get_X < 920 && 100 < get_Y && get_Y < 525){//顔　喜ぶ
-                        animation_frag = 1;
-                        TIKUBI_FRAG = false;
-                        Random rnd = new Random();
-                        int i = rnd.nextInt(100);
-                        if(i < 50)
-                            sp.play(YOROKOBI1, 1, 1, 0, 0, 1);
-                        else
-                            sp.play(YOROKOBI2, 1, 1, 0, 0, 1);
-                    }else if(1250 < get_X &&  get_Y < 200) {//天気　声だけ流す
-                        TIKUBI_FRAG = false;
-                        animation_frag = 3;
-                        switch (weather_id){
-                            case 0:
-                                sp.play(CLEAR, 1, 1, 0, 0, 1);
-                                break;
-                            case 1:
-                                sp.play(CLOUDS, 1, 1, 0, 0, 1);
-                                break;
-                            case 2:
-                                sp.play(RAIN, 1, 1, 0, 0, 1);
-                                break;
-                            case 3:
-                                sp.play(SNOW, 1, 1, 0, 0, 1);
-                                break;
-                        }
-                    }else if(400 < get_X && get_X < 1100 && 1150 < get_Y && get_Y < 1600) {
-                        animation_frag = 3;
-                        sp.play(siru, 1, 1, 0, 0, 1);
-                    }else
-                        TIKUBI_FRAG = false;
-
-                    switch(animation_frag) {
-                        case 0://待ってるだけ
-                            break;
-                        case 1://喜ぶ->待つ
-                            image_machi.setVisibility(View.INVISIBLE);
-                            image_okori.setVisibility(View.INVISIBLE);
-                            image_yorokobi.setVisibility(View.VISIBLE);
-                            anim = (AnimationDrawable) image_yorokobi.getBackground();
-                            anim.start();
-                            break;
-                        case 2://怒る→待つ
-                            image_yorokobi.setVisibility(View.INVISIBLE);
-                            image_machi.setVisibility(View.INVISIBLE);
-                            image_okori.setVisibility(View.VISIBLE);
-                            anim = (AnimationDrawable) image_okori.getBackground();
-                            anim.start();
-                            break;
-                    }
-                        thread =
-                            (new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                        try {
-                                            switch(animation_frag){
-                                                case 0://待ってるだけ
-                                                    break;
-                                                case 1://喜ぶ->待つ
-                                                    Thread.sleep(3500);
-                                                    handler.sendEmptyMessage(0);
-                                                    break;
-                                                case 2://怒る→待つ
-                                                    Thread.sleep(3500);
-                                                    handler.sendEmptyMessage(0);
-                                                    break;
-                                                case 3://しゃべる
-                                                    Thread.sleep(3500);
-                                                    handler.sendEmptyMessage(0);
-                                                    break;
-                                            }
-                                        } catch (InterruptedException e) {}
-                                    }
-                            }));
-                    thread.start();
+                    rain_touch((int) motionEvent.getX(),(int) motionEvent.getY());
                 }
                 return false;
             }
@@ -257,16 +140,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
 
 
-        //初期れいんちゃん
+        //れいんちゃん通常時
         image_machi= (ImageView)findViewById(R.id.rain_machi);
         image_machi.setBackgroundResource(R.drawable.rain_machi_anim);
         anim = (AnimationDrawable)image_machi.getBackground();
         anim.start();
 
+        //れいんちゃんy喜び
         image_yorokobi = (ImageView)findViewById(R.id.rain_yorokobi);
         image_yorokobi.setBackgroundResource(R.drawable.rain_yorokobi_anim);
         image_yorokobi.setVisibility(View.INVISIBLE);
 
+        //れいんちゃん怒り
         image_okori = (ImageView)findViewById(R.id.rain_okori);
         image_okori.setBackgroundResource(R.drawable.rain_okori_anim);
         image_okori.setVisibility(View.INVISIBLE);
@@ -274,6 +159,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
 
+    //drawer内のボタン（メニュー）管理
     @Override
     public void onClick(View view) {
         Intent intent;
@@ -282,26 +168,36 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 intent = new Intent(this,LogActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
+                finish();
                 break;
             case R.id.button_find2:
                 intent = new Intent(this,FindActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
+                finish();
                 break;
             case R.id.button_weather2:
                 intent = new Intent(this,WeatherActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
+                finish();
                 break;
         }
     }
 
+    //戻るボタン無効
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        Log.d("TouchEvent", "X:" + event.getX() + ",Y:" + event.getY());
-        return true;
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction()==KeyEvent.ACTION_DOWN) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_BACK:
+                    return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
     }
 
+    //ホーム画面の吹き出しの天気画像管理
     public void weather_draw() {
         Log.d("get", "weather");
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
@@ -325,6 +221,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         fukidashi.setVisibility(View.VISIBLE);
     }
 
+    //れいんちゃんanimation管理
     private void animation_change(){
         switch (animation_frag) {
             case 1://喜び->戻る
@@ -346,10 +243,125 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case 3:
                 animation_frag = 0;
         }
-
-
-
     }
+
+    //れいんちゃんタッチ管理
+    private void rain_touch(int get_X, int get_Y){
+        Log.d("TouchEvent", "X:" + get_X + ",Y:" + get_Y);
+
+        if(530 < get_X && get_X < 880 && 850 < get_Y && get_Y < 1000) {//おっぱい 怒る
+            if (535 < get_X && get_X < 555 && 925 < get_Y && get_Y < 945) {//右乳首 乳首は喜ぶ
+                animation_frag = 1;
+                //ピンポーン流す
+                if(TIKUBI_FRAG) {
+                    sp.play(TIKUBI2, 1, 1, 0, 0, 1);
+                    TIKUBI_FRAG = false;
+                }else {
+                    sp.play(TIKUBI1, 1, 1, 0, 0, 1);
+                    TIKUBI_FRAG = true;
+                }
+            }else if(760 < get_X && get_X < 780 && 945 < get_Y && get_Y < 965) {//左乳首
+                animation_frag = 1;
+                //ピンポーン流す
+                if(TIKUBI_FRAG) {
+                    sp.play(TIKUBI2, 1, 1, 0, 0, 1);
+                    TIKUBI_FRAG = false;
+                }else {
+                    sp.play(TIKUBI1, 1, 1, 0, 0, 1);
+                    TIKUBI_FRAG = true;
+                }
+            }else {
+                //怒った声流す
+                animation_frag = 2;
+                TIKUBI_FRAG = false;
+                Random rnd = new Random();
+                int i = rnd.nextInt(100);
+                if(i < 45)
+                    sp.play(OPPAI1, 1, 1, 0, 0, 1);
+                else if(i < 90)
+                    sp.play(OPPAI2, 1, 1, 0, 0, 1);
+                else
+                    sp.play(OPPAI3, 1, 1, 0, 0, 1);
+            }
+        }else if(490 < get_X && get_X < 920 && 100 < get_Y && get_Y < 525){//顔　喜ぶ
+            animation_frag = 1;
+            TIKUBI_FRAG = false;
+            Random rnd = new Random();
+            int i = rnd.nextInt(100);
+            if(i < 50)
+                sp.play(YOROKOBI1, 1, 1, 0, 0, 1);
+            else
+                sp.play(YOROKOBI2, 1, 1, 0, 0, 1);
+        }else if(1250 < get_X &&  get_Y < 200) {//天気　声だけ流す
+            TIKUBI_FRAG = false;
+            animation_frag = 3;
+            switch (weather_id){
+                case 0:
+                    sp.play(CLEAR, 1, 1, 0, 0, 1);
+                    break;
+                case 1:
+                    sp.play(CLOUDS, 1, 1, 0, 0, 1);
+                    break;
+                case 2:
+                    sp.play(RAIN, 1, 1, 0, 0, 1);
+                    break;
+                case 3:
+                    sp.play(SNOW, 1, 1, 0, 0, 1);
+                    break;
+            }
+        }else if(400 < get_X && get_X < 1100 && 1150 < get_Y && get_Y < 1600) {
+            animation_frag = 3;
+            sp.play(siru, 1, 1, 0, 0, 1);
+        }else
+            TIKUBI_FRAG = false;
+
+        switch(animation_frag) {
+            case 0://待ってるだけ
+                break;
+            case 1://喜ぶ->待つ
+                image_machi.setVisibility(View.INVISIBLE);
+                image_okori.setVisibility(View.INVISIBLE);
+                image_yorokobi.setVisibility(View.VISIBLE);
+                anim = (AnimationDrawable) image_yorokobi.getBackground();
+                anim.start();
+                break;
+            case 2://怒る→待つ
+                image_yorokobi.setVisibility(View.INVISIBLE);
+                image_machi.setVisibility(View.INVISIBLE);
+                image_okori.setVisibility(View.VISIBLE);
+                anim = (AnimationDrawable) image_okori.getBackground();
+                anim.start();
+                break;
+        }
+        thread =
+                (new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            switch(animation_frag){
+                                case 0://待ってるだけ
+                                    break;
+                                case 1://喜ぶ->待つ
+                                    Thread.sleep(3500);
+                                    handler.sendEmptyMessage(0);
+                                    break;
+                                case 2://怒る→待つ
+                                    Thread.sleep(3500);
+                                    handler.sendEmptyMessage(0);
+                                    break;
+                                case 3://しゃべる
+                                    Thread.sleep(3500);
+                                    handler.sendEmptyMessage(0);
+                                    break;
+                            }
+                        } catch (InterruptedException e) {
+                        }
+                    }
+                }));
+        thread.start();
+    }
+
+    //BluetoothをONにするintentから戻ると呼ばれるmethod
     @Override
     protected void onActivityResult(int requestCode, int ResultCode, Intent date){
         if(requestCode == REQUEST_ENABLE_BLUETOOTH){
@@ -365,14 +377,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-
-
+    //animation動作中はスレッド動かして時間計ってタッチ無効にしてるから、コールバックでGUIいじる
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             animation_change();
         }
     };
 
+    //れいんちゃん誘拐通知的な
     private void rain_pakuri(){
         new AlertDialog.Builder(this)
                 .setTitle("ヤバイ！！！")

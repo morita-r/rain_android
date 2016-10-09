@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -30,9 +31,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-/**
- * Created by mori on 2016/08/23.
- */
 public class FindActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener,View.OnClickListener{
     MapFragment mf;
     private GoogleMap mMap;
@@ -103,14 +101,6 @@ public class FindActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(options);
         mMap.moveCamera(cUpdate);
 
-/*        mMap.setOnMapClickListener(new OnMapClickListener() {
-
-
-            @Override
-            public void onMapClick(LatLng latLng) {
-
-            }
-        });*/
 
     }
 
@@ -129,7 +119,7 @@ public class FindActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
+    //drawer内のボタン（メニュー）管理
     @Override
     public void onClick(View view) {
         Intent intent;
@@ -138,18 +128,33 @@ public class FindActivity extends FragmentActivity implements OnMapReadyCallback
                 intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
+                finish();
                 break;
             case R.id.button_log2:
                 intent = new Intent(this, LogActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
+                finish();
                 break;
             case R.id.button_weather2:
                 intent = new Intent(this, WeatherActivity.class);
                 startActivity(intent);
                 mDrawer.closeDrawers();
+                finish();
                 break;
         }
-
     }
+
+    //戻るボタン無効
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction()==KeyEvent.ACTION_DOWN) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_BACK:
+                    return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
 }
