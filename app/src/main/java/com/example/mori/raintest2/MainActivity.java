@@ -63,6 +63,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         weather.setOnClickListener(this);
         fukidashi = (ImageView)findViewById(R.id.fukidashi);
 
+
+        /*プルリクしちゃうぜ！*/
         //デモなのでやらない
 /*
         //Bluetooth関係
