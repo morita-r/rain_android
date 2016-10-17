@@ -41,6 +41,7 @@ public class HttpTask extends AsyncTask<Void, Void, String> {
     final static int FUKUOKA = 7;
     final static int URAZIO = 8;
     final static int PUSAN = 9;
+    final static int POINT = 10;//雨量によるポイント取得用
 
 
     public interface AsyncTaskCallback {
@@ -55,10 +56,16 @@ public class HttpTask extends AsyncTask<Void, Void, String> {
         this.callback = _callback;
         mParentActivity = parentActivity;
         this.type = type.toUpperCase();
-        this.mUrl = "http://api.openweathermap.org/data/2.5/forecast/weather?lat=" + Double.toString(latitude)
-                + "8&amp;lon=" + Double.toString(longitude)
-                +"&amp;mode=json&units=metric&amp;cnt=11"
-                +"&APPID="+ api;
+        if(id != POINT) {
+            this.mUrl = "http://api.openweathermap.org/data/2.5/forecast/weather?lat=" + Double.toString(latitude)
+                    + "&amp;lon=" + Double.toString(longitude)
+                    + "&amp;mode=json&units=metric&amp;cnt=11"
+                    + "&APPID=" + api;
+        }else{//ポイント取得時は、予報じゃなくて現在の情報を用いるため少し変わる
+            this.mUrl = "http://api.openweathermap.org/data/2.5/weather?lat=" + Double.toString(latitude)
+                    + "&amp;lon=" + Double.toString(longitude)
+                    + "&amp;mode=json&units=metric&APPID=" + api;
+        }
     }
 
     public void setApi(String api)
@@ -101,85 +108,102 @@ public class HttpTask extends AsyncTask<Void, Void, String> {
             //http.setDoOutput(true);
             http.setRequestProperty("Content-Type","application/json; charset=utf-8");
             http.connect();
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mParentActivity);
+
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(http.getInputStream(), "UTF-8"));
             src = reader.readLine();
             JSONObject rootObj = new JSONObject(src);
-
-            JSONArray listArray = rootObj.getJSONArray("list");
-
-            int i;
-            int object_num;
-            String pref_name;
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mParentActivity);
-            for(i=0;i<8;i++){
-                object_num = i+3;
-                JSONObject OBJ = listArray.getJSONObject(object_num);
-                long dt = OBJ.getLong("dt");
-//                Log.d("http","dt:"+dt);
-
-                JSONObject OBJ_main = OBJ.getJSONObject("main");
-                float temp = (float)OBJ_main.getDouble("temp");
-//                Log.d("http","temp:"+temp);
-
-                JSONArray weatherArray = OBJ.getJSONArray("weather");
+            if(id == POINT){
+                JSONArray weatherArray = rootObj.getJSONArray("weather");
                 JSONObject weatherObj = weatherArray.getJSONObject(0);
                 String weather = weatherObj.getString("main");//Clear,Clouds,Rain
 //                Log.d("http","weather:"+weather);
                 String Rain = "Rain";
-                String city_name;
-                switch (id){
-                    case MYPOS:
-                        city_name = "MYPOS_";
-                        break;
-                    case SAPPORO:
-                        city_name= "SAPPORO_";
-                        break;
-                    case SENDAI:
-                        city_name= "SENDAI_";
-                        break;
-                    case SHINJUKU:
-                        city_name= "SHINJUKU_";
-                        break;
-                    case NAGOYA:
-                        city_name= "NAGOYA_";
-                        break;
-                    case OSAKA:
-                        city_name= "OSAKA_";
-                        break;
-                    case HIROSHIMA:
-                        city_name= "HIROSHIMA_";
-                        break;
-                    case PUSAN:
-                        city_name= "PUSAN_";
-                        break;
-                    case URAZIO:
-                        city_name= "URAZIO_";
-                        break;
-                    default:
-                        city_name= "FUKUOKA_";
-                        break;
+                if(weather.equals(Rain)) {
+                    JSONObject rainObj = rootObj.getJSONObject("rain");
+                    float rain = (float) rainObj.getDouble("3h");
+                    sp.edit().putFloat("POINT_RAIN", rain).apply();//  ex)rain2,0.64ミリ/3h
+                    Log.d("point_rain",Float.toString(rain));
+                }else{
+                    sp.edit().putFloat("POINT_RAIN", 0).apply();
+                    Log.d("point_rain","0");
                 }
+            }else {
+                JSONArray listArray = rootObj.getJSONArray("list");
+
+                int i;
+                int object_num;
+                String pref_name;
+//            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mParentActivity);
+                for (i = 0; i < 8; i++) {
+                    object_num = i + 3;
+                    JSONObject OBJ = listArray.getJSONObject(object_num);
+                    long dt = OBJ.getLong("dt");
+//                Log.d("http","dt:"+dt);
+
+                    JSONObject OBJ_main = OBJ.getJSONObject("main");
+                    float temp = (float) OBJ_main.getDouble("temp");
+//                Log.d("http","temp:"+temp);
+
+                    JSONArray weatherArray = OBJ.getJSONArray("weather");
+                    JSONObject weatherObj = weatherArray.getJSONObject(0);
+                    String weather = weatherObj.getString("main");//Clear,Clouds,Rain
+//                Log.d("http","weather:"+weather);
+                    String Rain = "Rain";
+                    String city_name;
+                    switch (id) {
+                        case MYPOS:
+                            city_name = "MYPOS_";
+                            break;
+                        case SAPPORO:
+                            city_name = "SAPPORO_";
+                            break;
+                        case SENDAI:
+                            city_name = "SENDAI_";
+                            break;
+                        case SHINJUKU:
+                            city_name = "SHINJUKU_";
+                            break;
+                        case NAGOYA:
+                            city_name = "NAGOYA_";
+                            break;
+                        case OSAKA:
+                            city_name = "OSAKA_";
+                            break;
+                        case HIROSHIMA:
+                            city_name = "HIROSHIMA_";
+                            break;
+                        case PUSAN:
+                            city_name = "PUSAN_";
+                            break;
+                        case URAZIO:
+                            city_name = "URAZIO_";
+                            break;
+                        default:
+                            city_name = "FUKUOKA_";
+                            break;
+                    }
 
 
-                if(weather.equals(Rain)){
-                    JSONObject rainObj = OBJ.getJSONObject("rain");
-                    float rain = (float)rainObj.getDouble("3h");
-                    sp.edit().putLong(city_name+"dt"+Integer.toString(i),dt).apply();//  ex)dt1,1472439600
-                    sp.edit().putFloat(city_name+"temp"+Integer.toString(i),temp).apply();//  ex)temp2,24.62
-                    sp.edit().putString(city_name+"weather"+Integer.toString(i),weather).apply();//  ex)weather4,Rain
-                    sp.edit().putFloat(city_name+"rain"+Integer.toString(i),rain).apply();//  ex)rain2,0.64ミリ/3h
-                    Log.d("temp0","id:"+id + ", temp:"+temp);
+                    if (weather.equals(Rain)) {
+                        JSONObject rainObj = OBJ.getJSONObject("rain");
+                        float rain = (float) rainObj.getDouble("3h");
+                        sp.edit().putLong(city_name + "dt" + Integer.toString(i), dt).apply();//  ex)dt1,1472439600
+                        sp.edit().putFloat(city_name + "temp" + Integer.toString(i), temp).apply();//  ex)temp2,24.62
+                        sp.edit().putString(city_name + "weather" + Integer.toString(i), weather).apply();//  ex)weather4,Rain
+                        sp.edit().putFloat(city_name + "rain" + Integer.toString(i), rain).apply();//  ex)rain2,0.64ミリ/3h
+                        Log.d("temp0", "id:" + id + ", temp:" + temp);
 //                    Log.d("http","rain:"+rain);
-                }else{//雨は降らない
-                    sp.edit().putLong(city_name+"dt"+Integer.toString(i),dt).apply();//  ex)dt1,1472439600
-                    sp.edit().putFloat(city_name+"temp"+Integer.toString(i),temp).apply();//  ex)temp2,24.62
-                    sp.edit().putString(city_name+"weather"+Integer.toString(i),weather).apply();//  ex)weather4,Rain
-                    sp.edit().putFloat(city_name+"rain"+Integer.toString(i),0).apply();//  ex)rain2,0.64ミリ/3h
+                    } else {//雨は降らない
+                        sp.edit().putLong(city_name + "dt" + Integer.toString(i), dt).apply();//  ex)dt1,1472439600
+                        sp.edit().putFloat(city_name + "temp" + Integer.toString(i), temp).apply();//  ex)temp2,24.62
+                        sp.edit().putString(city_name + "weather" + Integer.toString(i), weather).apply();//  ex)weather4,Rain
+                        sp.edit().putFloat(city_name + "rain" + Integer.toString(i), 0).apply();//  ex)rain2,0.64ミリ/3h
 //                    Log.d("http","rain:"+0);
+                    }
                 }
             }
-
 
         }catch (Exception e){
             e.printStackTrace();
