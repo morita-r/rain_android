@@ -1,8 +1,10 @@
 package com.example.mori.raintest2;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,7 @@ import android.widget.LinearLayout;
  * Created by rikuya on 2016/10/13.
  */
 
-public class BaseActivity extends Activity implements View.OnClickListener {
+public class BaseActivity extends FragmentActivity implements View.OnClickListener {
 
     //BaseView
     View mView;
