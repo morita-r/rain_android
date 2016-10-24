@@ -2,6 +2,7 @@ package com.example.mori.raintest2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +24,7 @@ import android.widget.ImageView;
 
 import java.util.Random;
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends FragmentActivity implements View.OnClickListener {
     private DrawerLayout mDrawer;
     SoundPool sp;
     ImageView fukidashi;
@@ -87,6 +89,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 */
 
         //sound関係
+
         sp = new SoundPool(1, AudioManager.STREAM_MUSIC,0);
         OPPAI1 = sp.load(this,R.raw.oppai1,0);
         OPPAI2 = sp.load(this,R.raw.oppai2,0);
@@ -157,6 +160,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         image_okori = (ImageView)findViewById(R.id.rain_okori);
         image_okori.setBackgroundResource(R.drawable.rain_okori_anim);
         image_okori.setVisibility(View.INVISIBLE);
+
+
+        RainDialogFragment rainDialogFragment = RainDialogFragment.newInstance();
+        rainDialogFragment.show(getSupportFragmentManager(), "dialog");
 
     }
 
